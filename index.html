@@ -2,82 +2,70 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>商品金額計算器</title>
+  <title>商品總價計算</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-    }
-    table {
-      width: 100%;
-      max-width: 600px;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
-    }
-    input[type="number"] {
-      width: 60px;
-    }
-    .result {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
-    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    input[type="number"] { width: 60px; }
   </style>
 </head>
 <body>
-  <h2>商品金額計算器</h2>
-  <table>
+  <h2>商品清單</h2>
+  <table id="product-table">
     <thead>
       <tr>
+        <th>編號</th>
         <th>商品名稱</th>
-        <th>單價</th>
+        <th>台幣單價</th>
+        <th>韓幣單價</th>
         <th>數量</th>
-        <th>小計</th>
       </tr>
     </thead>
-    <tbody id="product-table">
-      <tr>
-        <td>商品1</td>
-        <td><input type="number" value="100" class="price"></td>
-        <td><input type="number" value="1" class="quantity"></td>
-        <td class="subtotal">100</td>
-      </tr>
-      <tr>
-        <td>商品2</td>
-        <td><input type="number" value="200" class="price"></td>
-        <td><input type="number" value="2" class="quantity"></td>
-        <td class="subtotal">400</td>
-      </tr>
+    <tbody>
+      <tr><td>1</td><td>衣服 (眼睛版/天使版) (黑/白)</td><td>1125</td><td>45000</td><td><input type="number" class="qty" value="0"></td></tr>
+      <tr><td>2</td><td>風衣外套</td><td>2475</td><td>99000</td><td><input type="number" class="qty" value="0"></td></tr>
+      <tr><td>3</td><td>帽子</td><td>975</td><td>39000</td><td><input type="number" class="qty" value="0"></td></tr>
+      <tr><td>4</td><td>筆電包</td><td>1125</td><td>45000</td><td><input type="number" class="qty" value="0"></td></tr>
+      <tr><td>5</td><td>小包包(X光版)</td><td>625</td><td>25000</td><td><input type="number" class="qty" value="0"></td></tr>
+      <tr><td>6</td><td>項鍊戒子</td><td>625</td><td>25000</td><td><input type="number" class="qty" value="0"></td></tr>
+      <tr><td>7</td><td>吊飾</td><td>725</td><td>29000</td><td><input type="number" class="qty" value="0"></td></tr>
+      <tr><td>8</td><td>滑鼠墊</td><td>150</td><td>6000</td><td><input type="number" class="qty" value="0"></td></tr>
+      <tr><td>9</td><td>CD吊飾</td><td>725</td><td>29000</td><td><input type="number" class="qty" value="0"></td></tr>
+      <tr><td>10</td><td>膠片鑰匙圈</td><td>625</td><td>25000</td><td><input type="number" class="qty" value="0"></td></tr>
+      <tr><td>11</td><td>明信片組</td><td>400</td><td>16000</td><td><input type="number" class="qty" value="0"></td></tr>
+      <tr><td>12</td><td>小卡包</td><td>150</td><td>6000</td><td><input type="number" class="qty" value="0"></td></tr>
     </tbody>
   </table>
 
-  <div class="result">
-    總數量：<span id="total-quantity">3</span>　|　總金額：<span id="total-amount">500</span>
-  </div>
+  <h3>總計</h3>
+  <p>總數量：<span id="total-qty">0</span></p>
+  <p>台幣總金額：<span id="total-twd">0</span> 元</p>
+  <p>韓幣總金額：<span id="total-krw">0</span> ₩</p>
 
   <script>
-    const updateTotals = () => {
-      let totalQuantity = 0;
-      let totalAmount = 0;
+    function updateTotals() {
+      const rows = document.querySelectorAll('#product-table tbody tr');
+      let totalQty = 0;
+      let totalTWD = 0;
+      let totalKRW = 0;
 
-      document.querySelectorAll('#product-table tr').forEach(row => {
-        const price = parseFloat(row.querySelector('.price').value) || 0;
-        const quantity = parseFloat(row.querySelector('.quantity').value) || 0;
-        const subtotal = price * quantity;
-        row.querySelector('.subtotal').textContent = subtotal.toFixed(0);
-        totalQuantity += quantity;
-        totalAmount += subtotal;
+      rows.forEach(row => {
+        const td = row.querySelectorAll('td');
+        const twd = parseInt(td[2].textContent);
+        const krw = parseInt(td[3].textContent);
+        const qty = parseInt(td[4].querySelector('input').value) || 0;
+
+        totalQty += qty;
+        totalTWD += twd * qty;
+        totalKRW += krw * qty;
       });
 
-      document.getElementById('total-quantity').textContent = totalQuantity;
-      document.getElementById('total-amount').textContent = totalAmount.toFixed(0);
-    };
+      document.getElementById('total-qty').textContent = totalQty;
+      document.getElementById('total-twd').textContent = totalTWD.toLocaleString();
+      document.getElementById('total-krw').textContent = totalKRW.toLocaleString();
+    }
 
-    document.querySelectorAll('.price, .quantity').forEach(input => {
+    document.querySelectorAll('.qty').forEach(input => {
       input.addEventListener('input', updateTotals);
     });
 
